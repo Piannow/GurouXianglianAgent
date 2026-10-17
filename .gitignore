@@ -1,0 +1,24 @@
+# 运行时生成的文件（不入库）
+Human_Coupler_Fulcrum_Config.json
+last_output.txt
+
+# 备份目录
+.backups/
+*.bak
+
+# 便携环境（体积大，按需自备）
+Human_Coupler_Fulcrum_Portable_Environment/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# 系统与编辑器
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/
+
+# 临时文件
+_tmp_*.py
