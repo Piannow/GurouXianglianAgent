@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>漏洞百出测试台</title>
+    <style>
+        /* Bug 1: 严重的 CSS 全局污染 */
+        div {
+            border: 2px dashed red;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>前端重灾区测试</h1>
+
+    <!-- Bug 2: XSS 跨站脚本漏洞 -->
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="输入内容...">
+        <button onclick="renderInput() ">渲染输入</button>
+        <div id="output"></div>
+    </div>
+
+    <!-- Bug 3: 数组越界与逻辑判断错误 -->
+    <div class="list-area">
+        <button onclick="renderList() ">渲染列表</button>
+        <ul id="myList"></ul>
+    </div>
+
+    <script>
+        // Bug 2: 直接使用 innerHTML 渲染用户输入，导致 XSS
+        function renderInput() {
+            const input = document.getElementById('userInput').value;
+            document.getElementById('output').innerHTML = input;
+        }
+
+        // Bug 3: 循环中 <= arr.length 导致越界，且循环内直接操作 DOM 导致严重性能问题
+        function renderList() {
+            const list = document.getElementById('myList');
+            const data = ['苹果', '香蕉', '橘子'];
+            
+            for (let i = 0; i <= data.length; i++) {
+                const li = document.createElement('li');
+                li.innerText = data[i]; // 当 i=3 时，会变成 undefined
+                list.appendChild(li);
+            }
+        }
+
+        // Bug 4: 内存泄漏 (无限定时器未清理)
+        let count = 0;
+        setInterval(() => {
+            count++;
+            console.log('Timer running: ' + count);
+        }, 1000);
+    </script>
+</body>
+</html>
