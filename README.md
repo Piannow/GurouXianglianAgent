@@ -1,6 +1,8 @@
 # 骨肉相连 Agent (GurouXianglian Agent)
 
-?? **项目主页** | ?? **[使用教程 (TUTORIAL.md)](TUTORIAL.md)**
+?? **项目主页** | ?? **[使用教程 (TUTORIAL.md)](TUTORIAL.md)** | ?? **[在线交互演示](https://piannow.github.io/GurouXianglianAgent/)**
+
+> ?? **不想看枯燥的代码？** 我们为你准备了一个沉浸式的 [在线全流程交互演示](https://piannow.github.io/GurouXianglianAgent/)，无需配置任何环境，直接在浏览器里体验“网页 AI 生成指令 -> 本地工具安全执行”的震撼闭环！
 
 
 
