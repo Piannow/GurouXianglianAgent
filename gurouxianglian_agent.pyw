@@ -51,19 +51,30 @@ def mount_portable_env():
             paths.insert(0, p)
     os.environ["PATH"] = os.pathsep.join(paths)
 
+def _decodes_as(data: bytes, encoding: str) -> bool:
+    try:
+        data.decode(encoding)
+        return True
+    except UnicodeDecodeError as e:
+        # 分块读取时末尾可能截断多字节字符，允许最后 3 字节不完整。
+        return e.start >= len(data) - 3
+    except LookupError:
+        return False
+
 def _detect_encoding(head: bytes) -> str:
     if not head: return "utf-8"
     if head.startswith(codecs.BOM_UTF32_LE) or head.startswith(codecs.BOM_UTF32_BE):
         return "utf-32"
     if head.startswith(codecs.BOM_UTF8): return "utf-8-sig"
     if head.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)): return "utf-16"
-    try:
-        head.decode("utf-8")
-        return "utf-8"
-    except UnicodeDecodeError as e:
-        if e.start >= len(head) - 3:
-            return "utf-8"
-        return locale.getpreferredencoding(False)
+    if _decodes_as(head, "utf-8"): return "utf-8"
+    # 无 BOM 的 GBK / GB18030 在旧文件里很常见，先试它再退回系统编码。
+    # 不能只信 locale：UTF-8 mode 下 preferred 是 utf-8，GBK 文件会被当成 UTF-8 读出乱码。
+    preferred = locale.getpreferredencoding(False)
+    for candidate in ("gb18030", preferred):
+        if candidate.replace("-", "").lower() in ("utf8", "utf8sig"): continue
+        if _decodes_as(head, candidate): return candidate
+    return "utf-8"
 
 def _decode_output(b: bytes) -> str:
     enc = _detect_encoding(b)
@@ -84,8 +95,9 @@ def read_text(path):
     enc = _detect_encoding(raw)
     try:
         return raw.decode(enc), enc
-    except Exception:
-        return raw.decode("utf-8", errors="replace"), "utf-8"
+    except UnicodeDecodeError as e:
+        # 猜错编码时宁可拒绝修改，也不要用替换字符写回把文件弄坏。
+        raise ValueError(f"无法按 {enc} 解码 {path}（第 {e.start} 字节），已取消操作以免损坏文件。")
 
 def write_text(path, text, encoding):
     try:
