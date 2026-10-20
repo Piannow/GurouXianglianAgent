@@ -1,8 +1,8 @@
 # 骨肉相连 Agent (GurouXianglian Agent)
 
-?? **项目主页** | ?? **[使用教程 (TUTORIAL.md)](TUTORIAL.md)** | ?? **[在线交互演示](https://piannow.github.io/GurouXianglianAgent/)**
+📌 **项目主页** | 📖 **[使用教程 (TUTORIAL.md)](TUTORIAL.md)** | 🚀 **[在线交互演示](https://piannow.github.io/GurouXianglianAgent/)**
 
-> ?? **不想看枯燥的代码？** 我们为你准备了一个沉浸式的 [在线全流程交互演示](https://piannow.github.io/GurouXianglianAgent/)，无需配置任何环境，直接在浏览器里体验“网页 AI 生成指令 -> 本地工具安全执行”的震撼闭环！
+> 🚀 **不想看枯燥的代码？** 我们为你准备了一个沉浸式的 [在线全流程交互演示](https://piannow.github.io/GurouXianglianAgent/)，无需配置任何环境，直接在浏览器里体验“网页 AI 生成指令 -> 本地工具安全执行”的震撼闭环！
 
 
 
@@ -99,8 +99,9 @@ GurouXianglianAgent/
 ├── Human_Coupler_Fulcrum_External_Commands/     # 外部命令 JSON 定义
 ├── Human_Coupler_Fulcrum_Portable_Environment/  # 便携工具（自动挂载 PATH）
 ├── Human_Coupler_Fulcrum_Config.json            # 运行时配置（不入库）
-├── last_output.txt                              # 最近输出（不入库）
-├── README.md
+├── README.md                                    # 项目主页
+├── TUTORIAL.md                                  # 保姆级使用教程
+├── index.html                                   # 在线交互演示（GitHub Pages）
 ├── LICENSE
 └── .gitignore
 ```
