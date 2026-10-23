@@ -181,4 +181,4 @@ def get_tools():
 
 ---
 
-<p align="center"><i>骨肉相连 —— 人与 AI，指令与执行，思考与反馈，紧密相连。</i></p>
+<p align="center"><i>骨肉相连 —— 人与喵娘，压抑与恶堕，肥鱼与Token，紧密相连。</i></p>
