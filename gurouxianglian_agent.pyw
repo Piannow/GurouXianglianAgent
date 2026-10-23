@@ -477,7 +477,7 @@ def pick_file(parent, init=None, title="选择文件"):
 
 class App:
     def __init__(self, root):
-        self.root = root; root.title("全能开发助手 v1.2.0 (特供互动版)"); root.minsize(400, 200)
+        self.root = root; root.title("全能开发助手 v1.1.0.喵 (本地执行端)"); root.minsize(400, 200)
         self.config = load_config()
         root.geometry(self.config.get("window_geometry", "950x750"))
         root.protocol("WM_DELETE_WINDOW", self._on_close)
