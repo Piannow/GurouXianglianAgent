@@ -784,7 +784,6 @@ class App:
                 if g: params["backup_dir"] = g
             
             self.shake_window()
-            self._pulse_terminal_bg()
             self._append(f"\n>>> [AI 指令] 触发工具: {tool_name} / {cmd_name}\n")
             self.running = True; self.run_btn.config(state="disabled")
             def worker():
@@ -862,7 +861,6 @@ class App:
         while not self.output_queue.empty():
             try: self.output_queue.get_nowait()
             except queue.Empty: break
-        self._pulse_terminal_bg()
         self._append(f"\n>>> {cmd}\n"); self.running = True; self.run_btn.config(state="disabled")
         self.task_id += 1
         current_task_id = self.task_id
