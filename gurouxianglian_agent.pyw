@@ -8,6 +8,12 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PLUGINS_DIR = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_Plugins")
 EXTERNALS_DIR = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_External_Commands")
 PORTABLE_DIR = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_Portable_Environment")
+MIOA_DIR = os.path.join(BASE_DIR, "MiOa")
+
+VCS_IGNORE_DIRS = {".git", ".hg", ".svn", "__pycache__", "node_modules", ".idea", ".vscode",
+                   ".venv", "venv", "env", "build", "dist", ".backups", ".mypy_cache",
+                   "Human_Coupler_Fulcrum_VCS", "Human_Coupler_Fulcrum_Portable_Environment", "MiOa"}
+VCS_IGNORE_SUFFIX = (".pyc", ".pyo", ".bak", ".log", ".tmp", ".swp")
 CONFIG_FILE = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_Config.json")
 # =========================================================== 喵
 
