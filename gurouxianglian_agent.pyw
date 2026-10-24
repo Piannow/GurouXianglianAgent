@@ -15,12 +15,14 @@ VCS_IGNORE_DIRS = {".git", ".hg", ".svn", "__pycache__", "node_modules", ".idea"
                    "Human_Coupler_Fulcrum_VCS", "Human_Coupler_Fulcrum_Portable_Environment", "MiOa"}
 VCS_IGNORE_SUFFIX = (".pyc", ".pyo", ".bak", ".log", ".tmp", ".swp")
 CONFIG_FILE = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_Config.json")
+MIOA_DIR = os.path.join(BASE_DIR, "MiOa")
 # =========================================================== 喵
 
 LAST_OUTPUT = os.path.join(BASE_DIR, "last_output.txt")
 os.makedirs(PLUGINS_DIR, exist_ok=True)
 os.makedirs(EXTERNALS_DIR, exist_ok=True)
 os.makedirs(PORTABLE_DIR, exist_ok=True)
+os.makedirs(MIOA_DIR, exist_ok=True)
 
 sys.path.insert(0, PLUGINS_DIR)
 
