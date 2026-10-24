@@ -8,6 +8,7 @@ last_output.txt
 
 # 便携环境（体积大，按需自备）
 Human_Coupler_Fulcrum_Portable_Environment/
+Human_Coupler_Fulcrum_VCS/
 
 # Python 缓存
 __pycache__/

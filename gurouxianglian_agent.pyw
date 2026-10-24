@@ -4,12 +4,12 @@ from tkinter import scrolledtext, messagebox, simpledialog, filedialog, ttk
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# ================= 拗口防重名目录 (英文版) =================
+# ================= 拗口防重名目录 (英文版) ================= 喵
 PLUGINS_DIR = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_Plugins")
 EXTERNALS_DIR = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_External_Commands")
 PORTABLE_DIR = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_Portable_Environment")
 CONFIG_FILE = os.path.join(BASE_DIR, "Human_Coupler_Fulcrum_Config.json")
-# ===========================================================
+# =========================================================== 喵
 
 LAST_OUTPUT = os.path.join(BASE_DIR, "last_output.txt")
 os.makedirs(PLUGINS_DIR, exist_ok=True)
@@ -18,9 +18,9 @@ os.makedirs(PORTABLE_DIR, exist_ok=True)
 
 sys.path.insert(0, PLUGINS_DIR)
 
-# =========================================================
-# 全局配置与编码处理
-# =========================================================
+# ========================================================= 喵
+# 全局配置与编码处理 喵
+# ========================================================= 喵
 def load_config():
     if os.path.exists(CONFIG_FILE):
         try:
@@ -80,9 +80,9 @@ def _is_binary(raw: bytes) -> bool:
     text_like = sum(1 for b in sample if b in (9, 10, 13) or 32 <= b < 127 or b >= 128)
     return text_like / len(sample) < 0.90
 
-# =========================================================
-# 内置工具区
-# =========================================================
+# ========================================================= 喵
+# 内置工具区 喵
+# ========================================================= 喵
 def read_text(path):
     if not os.path.isfile(path): raise ValueError(f"文件不存在: {path}")
     with open(path, "rb") as f: raw = f.read()
@@ -559,7 +559,7 @@ class App:
         self.output = scrolledtext.ScrolledText(bottom_wrap, font=("Consolas", 10), bg="black", fg="#00ff00", insertbackground="white")
         self.output.pack(fill="both", expand=True)
         
-        # 终端高亮标签配置
+        # 终端高亮标签配置 喵
         self.output.tag_config("error", foreground="#ff3333", font=("Consolas", 10, "bold"))
         self.output.tag_config("success", foreground="#00ffcc", font=("Consolas", 10, "bold"))
         self.output.tag_config("info", foreground="#cccccc")
@@ -591,7 +591,7 @@ class App:
             g = int(34 * ratio)
             self.output.config(bg=f"#00{g:02x}00")
             self.root.after(40, lambda: fade(step - 1, total))
-        fade(12, 12) # 12步，每步40ms，总计约0.5秒的平滑渐变
+        fade(12, 12) # 12步，每步40ms，总计约0.5秒的平滑渐变 喵
 
     def shake_window(self):
         """轻微高级的窗口震动反馈（包含安全降级）"""
@@ -943,7 +943,7 @@ class App:
     def _append(self, text):
         if not text: return
         try:
-            # 强化版暴力高亮逻辑
+            # 强化版暴力高亮逻辑 喵
             lines = text.split('\n')
             for i, line in enumerate(lines):
                 if i > 0:
