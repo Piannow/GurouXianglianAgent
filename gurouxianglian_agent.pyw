@@ -88,25 +88,43 @@ def mount_portable_env():
             paths.insert(0, p)
     os.environ["PATH"] = os.pathsep.join(paths)
 
+def _decodes_as(data: bytes, enc: str, allow_truncated_tail: bool = True) -> bool:
+    """严格判断 data 能否用 enc 解码；allow_truncated_tail 兼容流式读取被截断的多字节尾部"""
+    try:
+        data.decode(enc)
+        return True
+    except UnicodeDecodeError as e:
+        return allow_truncated_tail and e.start >= len(data) - 3
+    except LookupError:
+        return False
+
 def _detect_encoding(head: bytes) -> str:
     if not head: return "utf-8"
     if head.startswith(codecs.BOM_UTF32_LE) or head.startswith(codecs.BOM_UTF32_BE):
         return "utf-32"
     if head.startswith(codecs.BOM_UTF8): return "utf-8-sig"
     if head.startswith((codecs.BOM_UTF16_LE, codecs.BOM_UTF16_BE)): return "utf-16"
-    try:
-        head.decode("utf-8")
-        return "utf-8"
-    except UnicodeDecodeError as e:
-        if e.start >= len(head) - 3:
-            return "utf-8"
-        return locale.getpreferredencoding(False)
+    # 依次严格探测：UTF-8 → GB18030（GBK 超集，可无损还原 GBK 文件）→ 系统编码
+    # 不能直接信 locale.getpreferredencoding(False)：UTF-8 模式下它返回 "utf-8"，
+    # 会把 GBK 文件误判成 UTF-8（见 issue #1）
+    for cand in ("utf-8", "gb18030"):
+        if _decodes_as(head, cand):
+            return cand
+    pref = locale.getpreferredencoding(False) or "utf-8"
+    if pref.lower().replace("_", "-") in ("utf-8", "utf8"):
+        return "gb18030"
+    if _decodes_as(head, pref):
+        return pref
+    return "gb18030"
 
 def _decode_output(b: bytes) -> str:
     if not b: return ""
     enc = _detect_encoding(b)
-    # 依次严格尝试：探测结果 → UTF-8 → GBK，避免中文 Windows 下 GBK 输出被误判成 UTF-8
-    for cand in (enc, "utf-8", "gbk"):
+    # 依次严格尝试：探测结果 → UTF-8 → GB18030 → 系统编码
+    # 这里只用于界面显示日志，最后才允许替换字符兜底
+    for cand in (enc, "utf-8", "gb18030", locale.getpreferredencoding(False)):
+        if not cand:
+            continue
         try:
             return b.decode(cand)
         except (UnicodeDecodeError, LookupError):
@@ -142,8 +160,9 @@ def read_text(path):
     enc = _detect_encoding(raw)
     try:
         text = raw.decode(enc)
-    except Exception:
-        text = raw.decode("utf-8", errors="replace")
+    except UnicodeDecodeError as e:
+        # 绝不能用 errors="replace" 的结果继续写回：那会把中文永久变成 U+FFFD
+        raise ValueError(f"无法按 {enc} 解码（第 {e.start} 字节），已取消操作以免损坏文件")
 
     return text, enc
 
@@ -235,11 +254,18 @@ def kt_write(file, content="", backup_dir=None):
 
         existed = os.path.isfile(path)
         bak_msg = ""
+        note = ""
         if existed:
             try:
                 _, enc = read_text(path)
             except ValueError as e:
-                return f"[错误] 拒绝覆盖: {e}"
+                if "二进制" in str(e):
+                    # 二进制文件没有可信的文本编码，沿用旧行为按 utf-8 覆盖并提示
+                    enc = "utf-8"
+                    note = "[提示] 原文件疑似二进制，已按 utf-8 覆盖\n"
+                else:
+                    # 解码失败时拒绝覆盖，避免把 GBK / 其他编码内容写成乱码
+                    return f"[错误] 拒绝覆盖: {e}"
             bak = _make_backup(path, backup_dir)
             bak_msg = f"备份: {bak}\n"
         else:
@@ -248,7 +274,7 @@ def kt_write(file, content="", backup_dir=None):
         write_text(path, content, enc)
         action = "覆盖" if existed else "新建"
         line_count = content.count("\n") + (1 if content and not content.endswith("\n") else 0)
-        return f"[成功] {action}文件: {path}\n{bak_msg}长度: {len(content)} 字符, {line_count} 行, 编码: {enc}"
+        return f"[成功] {action}文件: {path}\n{bak_msg}{note}长度: {len(content)} 字符, {line_count} 行, 编码: {enc}"
     except Exception as e: return f"[错误] 写入失败: {str(e)}"
 
 def line_delete(file, start_line, end_line, backup_dir=None):
