@@ -3543,6 +3543,8 @@ class App:
         if self.running: return
         raw = self.ai_text.get("1.0", "end").strip()
         if not raw: return
+        # 按下执行就立即清空输入区：无论 JSON 是否合法，避免错误内容残留
+        self.ai_text.delete("1.0", "end")
         try:
             data = None
             decoder = json.JSONDecoder()
@@ -3564,7 +3566,7 @@ class App:
             if not isinstance(params, dict): raise ValueError("params 必须是 JSON 对象")
 
             if tool_name == "sys" and cmd_name == "list_tools":
-                self.export_schema(); self.ai_text.delete("1.0", "end")
+                self.export_schema()
                 self._append("\n[提示] 已将最新的工具清单复制到剪贴板，请直接粘贴给 AI。\n")
                 # v1.2.0 更新：查看工具清单也留痕（空提交）
                 try:
@@ -3596,7 +3598,6 @@ class App:
                 res = invoke_tool(tool_name, cmd_name, params)
                 self.root.after(0, self._append, str(res) + "\n")
                 self.root.after(0, lambda: (self.run_btn.config(state="normal"), setattr(self, 'running', False)))
-                self.root.after(0, lambda: self.ai_text.delete("1.0", "end"))
 
             threading.Thread(target=worker, daemon=True).start()
 
@@ -3608,6 +3609,8 @@ class App:
         if self.mode.get() == "cmd":
             raw = self.cmd_text.get("1.0", "end").strip()
             if not raw: return
+            # 按下执行就立即清空输入区：无论命令是否合法、是否被拦截，都不保留残留内容
+            self.cmd_text.delete("1.0", "end")
 
             # v1.2.0 更新：首行 @行为名 → AI 自定义本次提交名称
             self.vcs_label = ""
@@ -3662,7 +3665,6 @@ class App:
                 if temp_bat and os.path.exists(temp_bat): os.remove(temp_bat)
                 return
 
-            self.cmd_text.delete("1.0", "end")
             self.vcs_skip = _is_readonly_shell(raw)
             self.vcs_cmd_text = raw
             self._execute_shell(cmd, temp_bat, out_enc)
